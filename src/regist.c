@@ -5,6 +5,7 @@
 #include <SDL.h>
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 typedef struct regist_ctx_t
@@ -25,9 +26,28 @@ static void regist_cb(ChiakiRegistEvent *event, void *user)
 
 bool rd_decode_account_id(const char *b64, uint8_t out[CHIAKI_PSN_ACCOUNT_ID_SIZE])
 {
+	if(!b64 || !*b64)
+		return false;
+
+	// También aceptamos el ID numérico (hex "0x..." o decimal), como lo muestran
+	// las herramientas de activación offline. Se codifica en little-endian.
+	bool is_hex = b64[0] == '0' && (b64[1] == 'x' || b64[1] == 'X');
+	bool is_dec = strspn(b64, "0123456789") == strlen(b64);
+	if(is_hex || is_dec)
+	{
+		const char *digits = is_hex ? b64 + 2 : b64;
+		char *end = NULL;
+		unsigned long long id = strtoull(digits, &end, is_hex ? 16 : 10);
+		if(!*digits || !end || *end)
+			return false;
+		for(size_t i = 0; i < CHIAKI_PSN_ACCOUNT_ID_SIZE; i++)
+			out[i] = (uint8_t)(id >> (8 * i));
+		return true;
+	}
+
 	uint8_t buf[32];
 	size_t size = sizeof(buf);
-	if(!b64 || chiaki_base64_decode(b64, strlen(b64), buf, &size) != CHIAKI_ERR_SUCCESS)
+	if(chiaki_base64_decode(b64, strlen(b64), buf, &size) != CHIAKI_ERR_SUCCESS)
 		return false;
 	if(size != CHIAKI_PSN_ACCOUNT_ID_SIZE)
 		return false;
@@ -45,7 +65,7 @@ bool rd_register(ChiakiLog *log, const char *host, bool ps5, const char *psn_acc
 	info.psn_online_id = NULL;
 	if(!rd_decode_account_id(psn_account_id_b64, info.psn_account_id))
 	{
-		CHIAKI_LOGE(log, "El PSN Account ID debe ser base64 de exactamente 8 bytes");
+		CHIAKI_LOGE(log, "Account ID no válido: usa base64 (8 bytes), hex 0x... o decimal");
 		return false;
 	}
 	info.pin = pin;

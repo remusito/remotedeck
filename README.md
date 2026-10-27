@@ -34,10 +34,13 @@ El script crea un contenedor Arch con distrobox, compila y deja el ejecutable en
 
 1. **En la consola**: Ajustes → Sistema → Uso a distancia → activar *Habilitar uso a distancia*.
    Para poder encenderla desde reposo: Ajustes → Sistema → Ahorro de energía → Funciones disponibles en modo reposo → *Permanecer conectado a Internet* y *Habilitar el encendido de la PS5 desde la red*.
-2. **Tu PSN Account ID** (base64, 8 bytes). Puedes obtenerlo con el script de chiaki-ng:
-   ```bash
-   python3 third-party/chiaki-ng/scripts/psn-account-id.py
-   ```
+2. **Tu PSN Account ID**. `--account-id` acepta base64 (`AbCdEfGhIjk=`), hex (`0x1234...`) o decimal.
+   - Con el script de chiaki-ng (inicia sesión en la web de Sony desde el PC/Deck, no desde la consola):
+     ```bash
+     python3 third-party/chiaki-ng/scripts/psn-account-id.py
+     ```
+   - **Consola con jailbreak y sin conexión a PSN**: activa la cuenta offline en un usuario de la PS5
+     con la herramienta de activación offline de tu payload/homebrew y usa ese mismo ID (normalmente lo muestra en hex).
 3. **Buscar la consola**:
    ```bash
    remotedeck discover
