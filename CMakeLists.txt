@@ -42,6 +42,9 @@ add_executable(remotedeck
 
 target_include_directories(remotedeck PRIVATE src)
 target_link_libraries(remotedeck PRIVATE chiaki-lib PkgConfig::RD_FFMPEG)
+if(UNIX)
+	target_link_libraries(remotedeck PRIVATE m) # orientation.c de libchiaki usa sqrt()
+endif()
 if(TARGET SDL2::SDL2)
 	target_link_libraries(remotedeck PRIVATE SDL2::SDL2)
 else()
