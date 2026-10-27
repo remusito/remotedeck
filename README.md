@@ -80,7 +80,7 @@ O = Options, F1 = PS, F2 = touchpad, F3 = Share, F11 = pantalla completa, Shift+
 
 ```bash
 sudo apt install build-essential cmake ninja-build pkg-config python3-protobuf protobuf-compiler \
-  libssl-dev libopus-dev libsdl2-dev libavcodec-dev libavutil-dev libjson-c-dev \
+  libssl-dev libopus-dev libsdl2-dev libavcodec-dev libavutil-dev libavformat-dev libswscale-dev libjson-c-dev \
   libminiupnpc-dev libevent-dev libva-dev nasm
 git submodule update --init --depth 1 third-party/chiaki-ng
 git -C third-party/chiaki-ng submodule update --init --depth 1 \
